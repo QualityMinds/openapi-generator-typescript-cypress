@@ -13,7 +13,7 @@ export interface ConfigurationParameters {
     queryParamsStringify?: (params: HTTPQuery) => string; // stringify function for query strings
     username?: string; // parameter for basic security
     password?: string; // parameter for basic security
-    apiKey?: string | Promise<string> | ((name: string) => string | Promise<string>); // parameter for apiKey security
+    apiKey?: string; // parameter for apiKey security
     accessToken?: string; // parameter for oauth2 security
     headers?: HTTPHeaders; //header params we want to use on every request
     credentials?: RequestCredentials; //value for the credentials param we want to use on each request
@@ -46,12 +46,8 @@ export class Configuration {
         return this.configuration.password;
     }
 
-    get apiKey(): ((name: string) => string | Promise<string>) | undefined {
-        const apiKey = this.configuration.apiKey;
-        if (apiKey) {
-            return typeof apiKey === 'function' ? apiKey : () => apiKey;
-        }
-        return undefined;
+    get apiKey(): string | undefined {
+        return this.configuration.apiKey;
     }
 
     get accessToken(): string | undefined {
@@ -255,7 +251,7 @@ export type HTTPBody = Json | FormData | URLSearchParams;
 export type HTTPRequestInit = { headers?: HTTPHeaders; method: HTTPMethod; credentials?: RequestCredentials; body?: HTTPBody };
 export type ModelPropertyNaming = 'camelCase' | 'snake_case' | 'PascalCase' | 'original';
 
-export type InitOverrideFunction = (requestContext: { init: HTTPRequestInit, context: RequestOpts }) => Promise<RequestInit>
+export type InitOverrideFunction = (requestContext: { init: HTTPRequestInit, context: RequestOpts }) => Bluebird.Promise<RequestInit>
 
 export interface FetchParams {
     url: string;
@@ -343,9 +339,9 @@ export interface ErrorContext {
 }
 
 export interface Middleware {
-    pre?(context: RequestContext): Promise<FetchParams | void>;
-    post?(context: ResponseContext): Promise<Response | void>;
-    onError?(context: ErrorContext): Promise<Response | void>;
+    pre?(context: RequestContext): Bluebird.Promise<FetchParams | void>;
+    post?(context: ResponseContext): Bluebird.Promise<Response | void>;
+    onError?(context: ErrorContext): Bluebird.Promise<Response | void>;
 }
 
 export interface ApiResponse<T> {
