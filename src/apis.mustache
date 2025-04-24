@@ -2,6 +2,7 @@
 /* eslint-disable */
 {{>licenseInfo}}
 
+import Bluebird from "cypress/types/cy-bluebird";
 import * as runtime from '../runtime{{importFileExtension}}';
 {{#imports.0}}
 import type {
@@ -56,7 +57,7 @@ export interface {{classname}}Interface {
      * @throws {RequiredError}
      * @memberof {{classname}}Interface
      */
-    {{nickname}}Raw({{#allParams.0}}requestParameters: {{#prefixParameterInterfaces}}{{classname}}{{/prefixParameterInterfaces}}{{operationIdCamelCase}}Request, {{/allParams.0}}initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<{{{returnType}}}{{^returnType}}void{{/returnType}}>>;
+    {{nickname}}Raw({{#allParams.0}}requestParameters: {{#prefixParameterInterfaces}}{{classname}}{{/prefixParameterInterfaces}}{{operationIdCamelCase}}Request, {{/allParams.0}}initOverrides?: RequestInit | runtime.InitOverrideFunction): Bluebird.Promise<runtime.ApiResponse<{{{returnType}}}{{^returnType}}void{{/returnType}}>>;
 
     /**
      {{#notes}}
@@ -70,10 +71,10 @@ export interface {{classname}}Interface {
      {{/isDeprecated}}
      */
     {{^useSingleRequestParameter}}
-    {{nickname}}({{#allParams}}{{paramName}}{{^required}}?{{/required}}: {{#isEnum}}{{{datatypeWithEnum}}}{{/isEnum}}{{^isEnum}}{{{dataType}}}{{#isNullable}} | null{{/isNullable}}{{/isEnum}}, {{/allParams}}initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<{{{returnType}}}{{#returnType}}{{#isResponseOptional}} | null | undefined {{/isResponseOptional}}{{/returnType}}{{^returnType}}void{{/returnType}}>;
+    {{nickname}}({{#allParams}}{{paramName}}{{^required}}?{{/required}}: {{#isEnum}}{{{datatypeWithEnum}}}{{/isEnum}}{{^isEnum}}{{{dataType}}}{{#isNullable}} | null{{/isNullable}}{{/isEnum}}, {{/allParams}}initOverrides?: RequestInit | runtime.InitOverrideFunction): Bluebird.Promise<{{{returnType}}}{{#returnType}}{{#isResponseOptional}} | null | undefined {{/isResponseOptional}}{{/returnType}}{{^returnType}}void{{/returnType}}>;
     {{/useSingleRequestParameter}}
     {{#useSingleRequestParameter}}
-    {{nickname}}({{#allParams.0}}requestParameters: {{#prefixParameterInterfaces}}{{classname}}{{/prefixParameterInterfaces}}{{operationIdCamelCase}}Request, {{/allParams.0}}initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<{{{returnType}}}{{#returnType}}{{#isResponseOptional}} | null | undefined {{/isResponseOptional}}{{/returnType}}{{^returnType}}void{{/returnType}}>;
+    {{nickname}}({{#allParams.0}}requestParameters: {{#prefixParameterInterfaces}}{{classname}}{{/prefixParameterInterfaces}}{{operationIdCamelCase}}Request, {{/allParams.0}}initOverrides?: RequestInit | runtime.InitOverrideFunction): Bluebird.Promise<{{{returnType}}}{{#returnType}}{{#isResponseOptional}} | null | undefined {{/isResponseOptional}}{{/returnType}}{{^returnType}}void{{/returnType}}>;
     {{/useSingleRequestParameter}}
 
 {{/operation}}
@@ -104,7 +105,7 @@ export class {{classname}} extends runtime.BaseAPI {
      * @deprecated
      {{/isDeprecated}}
      */
-    async {{nickname}}Raw({{#allParams.0}}requestParameters: {{#prefixParameterInterfaces}}{{classname}}{{/prefixParameterInterfaces}}{{operationIdCamelCase}}Request, {{/allParams.0}}initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<{{{returnType}}}{{^returnType}}void{{/returnType}}>> {
+    {{nickname}}Raw({{#allParams.0}}requestParameters: {{#prefixParameterInterfaces}}{{classname}}{{/prefixParameterInterfaces}}{{operationIdCamelCase}}Request, {{/allParams.0}}initOverrides?: RequestInit | runtime.InitOverrideFunction): Bluebird.Promise<runtime.ApiResponse<{{{returnType}}}{{^returnType}}void{{/returnType}}>> {
         {{#allParams}}
         {{#required}}
         if (requestParameters['{{paramName}}'] == null) {
@@ -182,19 +183,14 @@ export class {{classname}} extends runtime.BaseAPI {
         {{/isBasicBasic}}
         {{#isBasicBearer}}
         if (this.configuration && this.configuration.accessToken) {
-            const token = this.configuration.accessToken;
-            const tokenString = await token("{{name}}", [{{#scopes}}"{{{scope}}}"{{^-last}}, {{/-last}}{{/scopes}}]);
-
-            if (tokenString) {
-                headerParameters["Authorization"] = `Bearer ${tokenString}`;
-            }
+            headerParameters["Authorization"] = `Bearer ${this.configuration.accessToken}`;
         }
         {{/isBasicBearer}}
         {{/isBasic}}
         {{#isApiKey}}
         {{#isKeyInHeader}}
         if (this.configuration && this.configuration.apiKey) {
-            headerParameters["{{keyParamName}}"] = await this.configuration.apiKey("{{keyParamName}}"); // {{name}} authentication
+            headerParameters["{{keyParamName}}"] = this.configuration.apiKey;
         }
 
         {{/isKeyInHeader}}
@@ -265,7 +261,7 @@ export class {{classname}} extends runtime.BaseAPI {
             {{/isEnumRef}}
             {{^isEnumRef}}
             {{^withoutRuntimeChecks}}
-            formParams.append('{{baseName}}', new Blob([JSON.stringify({{returnType}}ToJSON(requestParameters['{{paramName}}']))], { type: "application/json", }));
+            formParams.append('{{baseName}}', new Blob([JSON.stringify({{{dataType}}}ToJSON(requestParameters['{{paramName}}']))], { type: "application/json", }));
             {{/withoutRuntimeChecks}}{{#withoutRuntimeChecks}}
             formParams.append('{{baseName}}', new Blob([JSON.stringify(requestParameters['{{paramName}}'])], { type: "application/json", }));
             {{/withoutRuntimeChecks}}
@@ -277,79 +273,89 @@ export class {{classname}} extends runtime.BaseAPI {
         {{/isArray}}
         {{/formParams}}
         {{/hasFormParams}}
-        const response = await this.request({
-            path: `{{{path}}}`{{#pathParams}}.replace(`{${"{{baseName}}"}}`, encodeURIComponent(String(requestParameters['{{paramName}}']))){{/pathParams}},
-            method: '{{httpMethod}}',
-            headers: headerParameters,
-            query: queryParameters,
-            {{#hasBodyParam}}
-            {{#bodyParam}}
-            {{#isContainer}}
-            {{^withoutRuntimeChecks}}
-            body: requestParameters['{{paramName}}']{{#isArray}}{{#items}}{{^isPrimitiveType}}!.map({{datatype}}ToJSON){{/isPrimitiveType}}{{/items}}{{/isArray}},
-            {{/withoutRuntimeChecks}}
-            {{#withoutRuntimeChecks}}
-            body: requestParameters['{{paramName}}'],
-            {{/withoutRuntimeChecks}}
-            {{/isContainer}}
-            {{^isContainer}}
-            {{^isPrimitiveType}}
-            {{^withoutRuntimeChecks}}
-            body: {{dataType}}ToJSON(requestParameters['{{paramName}}']),
-            {{/withoutRuntimeChecks}}
-            {{#withoutRuntimeChecks}}
-            body: requestParameters['{{paramName}}'],
-            {{/withoutRuntimeChecks}}
-            {{/isPrimitiveType}}
-            {{#isPrimitiveType}}
-            body: requestParameters['{{paramName}}'] as any,
-            {{/isPrimitiveType}}
-            {{/isContainer}}
-            {{/bodyParam}}
-            {{/hasBodyParam}}
-            {{#hasFormParams}}
-            body: formParams,
-            {{/hasFormParams}}
-        }, initOverrides);
-
-        {{#returnType}}
-        {{#isResponseFile}}
-        return new runtime.BlobApiResponse(response);
-        {{/isResponseFile}}
-        {{^isResponseFile}}
-        {{#returnTypeIsPrimitive}}
-        {{#isMap}}
-        return new runtime.JSONApiResponse<any>(response);
-        {{/isMap}}
-        {{#isArray}}
-        return new runtime.JSONApiResponse<any>(response);
-        {{/isArray}}
-        {{#returnSimpleType}}
-        if (this.isJsonMime(response.headers.get('content-type'))) {
-            return new runtime.JSONApiResponse<{{returnType}}>(response);
-        } else {
-            return new runtime.TextApiResponse(response) as any;
-        }
-        {{/returnSimpleType}}
-        {{/returnTypeIsPrimitive}}
-        {{^returnTypeIsPrimitive}}
-        {{#isArray}}
-        return new runtime.JSONApiResponse(response{{^withoutRuntimeChecks}}, (jsonValue) => {{#uniqueItems}}new Set({{/uniqueItems}}jsonValue.map({{returnBaseType}}FromJSON){{/withoutRuntimeChecks}}){{#uniqueItems}}){{/uniqueItems}};
-        {{/isArray}}
-        {{^isArray}}
-        {{#isMap}}
-        return new runtime.JSONApiResponse(response{{^withoutRuntimeChecks}}, (jsonValue) => runtime.mapValues(jsonValue, {{returnBaseType}}FromJSON){{/withoutRuntimeChecks}});
-        {{/isMap}}
-        {{^isMap}}
-        return new runtime.JSONApiResponse(response{{^withoutRuntimeChecks}}, (jsonValue) => {{returnBaseType}}FromJSON(jsonValue){{/withoutRuntimeChecks}});
-        {{/isMap}}
-        {{/isArray}}
-        {{/returnTypeIsPrimitive}}
-        {{/isResponseFile}}
-        {{/returnType}}
-        {{^returnType}}
-        return new runtime.VoidApiResponse(response);
-        {{/returnType}}
+        return new Cypress.Promise((resolve, reject) => {
+            this.request<{{{returnType}}}{{^returnType}}void{{/returnType}}>({
+                path: `{{{path}}}`{{#pathParams}}.replace(`{${"{{baseName}}"}}`, encodeURIComponent(String(requestParameters['{{paramName}}']))){{/pathParams}},
+                method: '{{httpMethod}}',
+                headers: headerParameters,
+                query: queryParameters,
+                {{#hasBodyParam}}
+                {{#bodyParam}}
+                {{#isContainer}}
+                {{^withoutRuntimeChecks}}
+                body: requestParameters['{{paramName}}']{{#isArray}}{{#items}}{{^isPrimitiveType}}!.map({{datatype}}ToJSON){{/isPrimitiveType}}{{/items}}{{/isArray}},
+                {{/withoutRuntimeChecks}}
+                {{#withoutRuntimeChecks}}
+                body: requestParameters['{{paramName}}'],
+                {{/withoutRuntimeChecks}}
+                {{/isContainer}}
+                {{^isContainer}}
+                {{^isPrimitiveType}}
+                {{^withoutRuntimeChecks}}
+                body: {{dataType}}ToJSON(requestParameters['{{paramName}}']),
+                {{/withoutRuntimeChecks}}
+                {{#withoutRuntimeChecks}}
+                body: requestParameters['{{paramName}}'],
+                {{/withoutRuntimeChecks}}
+                {{/isPrimitiveType}}
+                {{#isPrimitiveType}}
+                body: requestParameters['{{paramName}}'] as any,
+                {{/isPrimitiveType}}
+                {{/isContainer}}
+                {{/bodyParam}}
+                {{/hasBodyParam}}
+                {{#hasFormParams}}
+                body: formParams,
+                {{/hasFormParams}}
+            }, initOverrides).then(response => {
+                cy.log(`Raw response: `, response);
+                {{#returnType}}
+                {{#isResponseFile}}
+                return resolve(new runtime.BlobApiResponse(response));
+                {{/isResponseFile}}
+                {{^isResponseFile}}
+                {{#returnTypeIsPrimitive}}
+                {{#isMap}}
+                return resolve(new runtime.JSONApiResponse<any>(response));
+                {{/isMap}}
+                {{#isArray}}
+                return resolve(new runtime.JSONApiResponse<any>(response));
+                {{/isArray}}
+                {{#returnSimpleType}}
+                const contentTypeEntry = Object.entries(response.headers).find(
+                    ([key]) => key.toLowerCase() === 'content-type'
+                );
+                if (contentTypeEntry !== undefined) {
+                    const contentType = Array.isArray(contentTypeEntry[1])
+                        ? contentTypeEntry[1][0]
+                        : contentTypeEntry[1];
+                    if (this.isJsonMime(contentType)) {
+                        return resolve(new runtime.JSONApiResponse<{{returnType}}>(response));
+                    }
+                }
+                return resolve(new runtime.TextApiResponse(response) as any);
+                {{/returnSimpleType}}
+                {{/returnTypeIsPrimitive}}
+                {{^returnTypeIsPrimitive}}
+                {{#isArray}}
+                return resolve(new runtime.JSONApiResponse(response{{^withoutRuntimeChecks}}, (jsonValue) => {{#uniqueItems}}new Set({{/uniqueItems}}jsonValue.map({{returnBaseType}}FromJSON){{/withoutRuntimeChecks}}){{#uniqueItems}}){{/uniqueItems}});
+                {{/isArray}}
+                {{^isArray}}
+                {{#isMap}}
+                return resolve(new runtime.JSONApiResponse(response{{^withoutRuntimeChecks}}, (jsonValue) => runtime.mapValues(jsonValue, {{returnBaseType}}FromJSON){{/withoutRuntimeChecks}}));
+                {{/isMap}}
+                {{^isMap}}
+                return resolve(new runtime.JSONApiResponse(response{{^withoutRuntimeChecks}}, (jsonValue) => {{returnBaseType}}FromJSON(jsonValue){{/withoutRuntimeChecks}}));
+                {{/isMap}}
+                {{/isArray}}
+                {{/returnTypeIsPrimitive}}
+                {{/isResponseFile}}
+                {{/returnType}}
+                {{^returnType}}
+                return resolve(new runtime.VoidApiResponse(response));
+                {{/returnType}}
+            }).catch((error) => reject(error));
+        });
     }
 
     /**
@@ -364,53 +370,59 @@ export class {{classname}} extends runtime.BaseAPI {
      {{/isDeprecated}}
      */
     {{^useSingleRequestParameter}}
-    async {{nickname}}({{#allParams}}{{paramName}}{{^required}}?{{/required}}: {{#isEnum}}{{{datatypeWithEnum}}}{{/isEnum}}{{^isEnum}}{{{dataType}}}{{#isNullable}} | null{{/isNullable}}{{/isEnum}}, {{/allParams}}initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<{{{returnType}}}{{#returnType}}{{#isResponseOptional}} | null | undefined {{/isResponseOptional}}{{/returnType}}{{^returnType}}void{{/returnType}}> {
-        {{#returnType}}
-        const response = await this.{{nickname}}Raw({{#allParams.0}}{ {{#allParams}}{{paramName}}: {{paramName}}{{^-last}}, {{/-last}}{{/allParams}} }, {{/allParams.0}}initOverrides);
-        {{#isResponseOptional}}
-        switch (response.raw.status) {
-            {{#responses}}
-            {{#is2xx}}
-            case {{code}}:
-                return {{#dataType}}await response.value(){{/dataType}}{{^dataType}}null{{/dataType}};
-            {{/is2xx}}
-            {{/responses}}
-            default:
-                return await response.value();
-        }
-        {{/isResponseOptional}}
-        {{^isResponseOptional}}
-        return await response.value();
-        {{/isResponseOptional}}
-        {{/returnType}}
-        {{^returnType}}
-        await this.{{nickname}}Raw({{#allParams.0}}{ {{#allParams}}{{paramName}}: {{paramName}}{{^-last}}, {{/-last}}{{/allParams}} }, {{/allParams.0}}initOverrides);
-        {{/returnType}}
+    {{nickname}}({{#allParams}}{{paramName}}{{^required}}?{{/required}}: {{#isEnum}}{{{datatypeWithEnum}}}{{/isEnum}}{{^isEnum}}{{{dataType}}}{{#isNullable}} | null{{/isNullable}}{{/isEnum}}, {{/allParams}}initOverrides?: RequestInit | runtime.InitOverrideFunction): Bluebird.Promise<{{{returnType}}}{{#returnType}}{{#isResponseOptional}} | null | undefined {{/isResponseOptional}}{{/returnType}}{{^returnType}}void{{/returnType}}> {
+        return new Cypress.Promise((resolve, reject) => {
+            this.{{nickname}}Raw({{#allParams.0}}{ {{#allParams}}{{paramName}}: {{paramName}}{{^-last}}, {{/-last}}{{/allParams}} }, {{/allParams.0}}initOverrides).then((response) => {
+                {{#returnType}}
+                {{#isResponseOptional}}
+                switch (response.raw.status) {
+                    {{#responses}}
+                    {{#is2xx}}
+                    case {{code}}:
+                        return resolve({{#dataType}} response.value(){{/dataType}}{{^dataType}}null{{/dataType}});
+                    {{/is2xx}}
+                    {{/responses}}
+                    default:
+                        return resolve(response.value());
+                }
+                {{/isResponseOptional}}
+                {{^isResponseOptional}}
+                return resolve(response.value());
+                {{/isResponseOptional}}
+                {{/returnType}}
+                {{^returnType}}
+                resolve();
+                {{/returnType}}
+            }).catch((error) => reject(error));
+        });
     }
     {{/useSingleRequestParameter}}
     {{#useSingleRequestParameter}}
-    async {{nickname}}({{#allParams.0}}requestParameters: {{#prefixParameterInterfaces}}{{classname}}{{/prefixParameterInterfaces}}{{operationIdCamelCase}}Request{{^hasRequiredParams}} = {}{{/hasRequiredParams}}, {{/allParams.0}}initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<{{{returnType}}}{{#returnType}}{{#isResponseOptional}} | null | undefined {{/isResponseOptional}}{{/returnType}}{{^returnType}}void{{/returnType}}> {
-        {{#returnType}}
-        const response = await this.{{nickname}}Raw({{#allParams.0}}requestParameters, {{/allParams.0}}initOverrides);
-        {{#isResponseOptional}}
-        switch (response.raw.status) {
-            {{#responses}}
-            {{#is2xx}}
-            case {{code}}:
-                return {{#dataType}}await response.value(){{/dataType}}{{^dataType}}null{{/dataType}};
-            {{/is2xx}}
-            {{/responses}}
-            default:
-                return await response.value();
-        }
-        {{/isResponseOptional}}
-        {{^isResponseOptional}}
-        return await response.value();
-        {{/isResponseOptional}}
-        {{/returnType}}
-        {{^returnType}}
-        await this.{{nickname}}Raw({{#allParams.0}}requestParameters, {{/allParams.0}}initOverrides);
-        {{/returnType}}
+    {{nickname}}({{#allParams.0}}requestParameters: {{#prefixParameterInterfaces}}{{classname}}{{/prefixParameterInterfaces}}{{operationIdCamelCase}}Request{{^hasRequiredParams}} = {}{{/hasRequiredParams}}, {{/allParams.0}}initOverrides?: RequestInit | runtime.InitOverrideFunction): Bluebird.Promise<{{{returnType}}}{{#returnType}}{{#isResponseOptional}} | null | undefined {{/isResponseOptional}}{{/returnType}}{{^returnType}}void{{/returnType}}> {
+        return new Cypress.Promise((resolve, reject) => {
+            this.{{nickname}}Raw({{#allParams.0}}requestParameters, {{/allParams.0}}initOverrides).then((response) => {
+                {{#returnType}}
+                {{#isResponseOptional}}
+                switch (response.raw.status) {
+                    {{#responses}}
+                    {{#is2xx}}
+                    case {{code}}:
+                        return resolve({{#dataType}} response.value(){{/dataType}}{{^dataType}}null{{/dataType}});
+                    {{/is2xx}}
+                    {{/responses}}
+                    default:
+                        return resolve(response.value());
+                }
+                {{/isResponseOptional}}
+                {{^isResponseOptional}}
+                return resolve(response.value());
+                {{/isResponseOptional}}
+                {{/returnType}}
+                {{^returnType}}
+                resolve();
+                {{/returnType}}
+            }).catch((error) => reject(error));
+        });
     }
     {{/useSingleRequestParameter}}
 
