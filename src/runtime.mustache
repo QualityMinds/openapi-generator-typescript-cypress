@@ -1,18 +1,20 @@
 /* tslint:disable */
 /* eslint-disable */
+
+import Bluebird from "cypress/types/cy-bluebird";
+
 {{>licenseInfo}}
 
 export const BASE_PATH = "{{{basePath}}}".replace(/\/+$/, "");
 
 export interface ConfigurationParameters {
     basePath?: string; // override base path
-    fetchApi?: FetchAPI; // override for fetch implementation
     middleware?: Middleware[]; // middleware to apply before/after fetch requests
     queryParamsStringify?: (params: HTTPQuery) => string; // stringify function for query strings
     username?: string; // parameter for basic security
     password?: string; // parameter for basic security
     apiKey?: string | Promise<string> | ((name: string) => string | Promise<string>); // parameter for apiKey security
-    accessToken?: string | Promise<string> | ((name?: string, scopes?: string[]) => string | Promise<string>); // parameter for oauth2 security
+    accessToken?: string; // parameter for oauth2 security
     headers?: HTTPHeaders; //header params we want to use on every request
     credentials?: RequestCredentials; //value for the credentials param we want to use on each request
 }
@@ -26,10 +28,6 @@ export class Configuration {
 
     get basePath(): string {
         return this.configuration.basePath != null ? this.configuration.basePath : BASE_PATH;
-    }
-
-    get fetchApi(): FetchAPI | undefined {
-        return this.configuration.fetchApi;
     }
 
     get middleware(): Middleware[] {
@@ -56,12 +54,8 @@ export class Configuration {
         return undefined;
     }
 
-    get accessToken(): ((name?: string, scopes?: string[]) => string | Promise<string>) | undefined {
-        const accessToken = this.configuration.accessToken;
-        if (accessToken) {
-            return typeof accessToken === 'function' ? accessToken : async () => accessToken;
-        }
-        return undefined;
+    get accessToken(): string | undefined {
+        return this.configuration.accessToken;
     }
 
     get headers(): HTTPHeaders | undefined {
@@ -120,16 +114,41 @@ export class BaseAPI {
         return BaseAPI.jsonRegex.test(mime);
     }
 
-    protected async request(context: RequestOpts, initOverrides?: RequestInit | InitOverrideFunction): Promise<Response> {
-        const { url, init } = await this.createFetchParams(context, initOverrides);
-        const response = await this.fetchApi(url, init);
-        if (response && (response.status >= 200 && response.status < 300)) {
-            return response;
+    protected request<ResponseBodyType>(context: RequestOpts, initOverrides?: RequestInit | InitOverrideFunction): Bluebird.Promise<Cypress.Response<ResponseBodyType>> {
+        if (this.configuration.accessToken) {
+            context.headers = context.headers || {};
+            context.headers['Authorization'] = `Bearer ${this.configuration.accessToken}`;
         }
-        throw new ResponseError(response, 'Response returned an error code');
-    }
+        const {url, init} = this.createFetchParams(context, initOverrides);
 
-    private async createFetchParams(context: RequestOpts, initOverrides?: RequestInit | InitOverrideFunction) {
+        let options: any = {
+            method: init.method,
+            url: url
+        };
+        if (init.body) {
+            options = {
+                ...options,
+                body: init.body
+            }
+        }
+        if (init.headers) {
+            options = {
+                ...options,
+                headers: init.headers
+            }
+        }
+
+        return new Cypress.Promise((resolve, reject) => {
+            cy.request<ResponseBodyType>(options).then(response => {
+                if (response.isOkStatusCode) {
+                    return resolve(response);
+                }
+                return reject("Response returned an error code");
+            });
+        });
+    }
+    
+    private createFetchParams(context: RequestOpts, initOverrides?: RequestInit | InitOverrideFunction) {
         let url = this.configuration.basePath + context.path;
         if (context.query !== undefined && Object.keys(context.query).length !== 0) {
             // only add the querystring to the URL if there are query parameters.
@@ -155,7 +174,7 @@ export class BaseAPI {
 
         const overriddenInit: RequestInit = {
             ...initParams,
-            ...(await initOverrideFn({
+            ...(initOverrideFn({
                 init: initParams,
                 context,
             }))
@@ -180,52 +199,6 @@ export class BaseAPI {
         return { url, init };
     }
 
-    private fetchApi = async (url: string, init: RequestInit) => {
-        let fetchParams = { url, init };
-        for (const middleware of this.middleware) {
-            if (middleware.pre) {
-                fetchParams = await middleware.pre({
-                    fetch: this.fetchApi,
-                    ...fetchParams,
-                }) || fetchParams;
-            }
-        }
-        let response: Response | undefined = undefined;
-        try {
-            response = await (this.configuration.fetchApi || fetch)(fetchParams.url, fetchParams.init);
-        } catch (e) {
-            for (const middleware of this.middleware) {
-                if (middleware.onError) {
-                    response = await middleware.onError({
-                        fetch: this.fetchApi,
-                        url: fetchParams.url,
-                        init: fetchParams.init,
-                        error: e,
-                        response: response ? response.clone() : undefined,
-                    }) || response;
-                }
-            }
-            if (response === undefined) {
-              if (e instanceof Error) {
-                throw new FetchError(e, 'The request failed and the interceptors did not return an alternative response');
-              } else {
-                throw e;
-              }
-            }
-        }
-        for (const middleware of this.middleware) {
-            if (middleware.post) {
-                response = await middleware.post({
-                    fetch: this.fetchApi,
-                    url: fetchParams.url,
-                    init: fetchParams.init,
-                    response: response.clone(),
-                }) || response;
-            }
-        }
-        return response;
-    }
-
     /**
      * Create a shallow clone of `this` by constructing a new instance
      * and then shallow cloning data members.
@@ -236,7 +209,7 @@ export class BaseAPI {
         next.middleware = this.middleware.slice();
         return next;
     }
-};
+}
 
 function isBlob(value: any): value is Blob {
     return typeof Blob !== 'undefined' && value instanceof Blob;
@@ -273,8 +246,6 @@ export const COLLECTION_FORMATS = {
     tsv: "\t",
     pipes: "|",
 };
-
-export type FetchAPI = WindowOrWorkerGlobalScope['fetch'];
 
 export type Json = any;
 export type HTTPMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'OPTIONS' | 'HEAD';
@@ -333,11 +304,10 @@ export function exists(json: any, key: string) {
 
 {{^withoutRuntimeChecks}}
 export function mapValues(data: any, fn: (item: any) => any) {
-    const result: { [key: string]: any } = {};
-    for (const key of Object.keys(data)) {
-        result[key] = fn(data[key]);
-    }
-    return result;
+  return Object.keys(data).reduce(
+    (acc, key) => ({ ...acc, [key]: fn(data[key]) }),
+    {}
+  );
 }
 {{/withoutRuntimeChecks}}
 
@@ -355,20 +325,17 @@ export interface Consume {
 }
 
 export interface RequestContext {
-    fetch: FetchAPI;
     url: string;
     init: RequestInit;
 }
 
 export interface ResponseContext {
-    fetch: FetchAPI;
     url: string;
     init: RequestInit;
     response: Response;
 }
 
 export interface ErrorContext {
-    fetch: FetchAPI;
     url: string;
     init: RequestInit;
     error: unknown;
@@ -382,8 +349,8 @@ export interface Middleware {
 }
 
 export interface ApiResponse<T> {
-    raw: Response;
-    value(): Promise<T>;
+    raw: Cypress.Response<T>;
+    value(): Bluebird.Promise<T>;
 }
 
 export interface ResponseTransformer<T> {
@@ -391,33 +358,33 @@ export interface ResponseTransformer<T> {
 }
 
 export class JSONApiResponse<T> {
-    constructor(public raw: Response, private transformer: ResponseTransformer<T> = (jsonValue: any) => jsonValue) {}
+    constructor(public raw: Cypress.Response<T>, private transformer: ResponseTransformer<T> = (jsonValue: any) => jsonValue) {}
 
-    async value(): Promise<T> {
-        return this.transformer(await this.raw.json());
+    value(): Bluebird.Promise<T> {
+        return new Cypress.Promise((resolve) => resolve(this.transformer(this.raw.body)));
     }
 }
 
 export class VoidApiResponse {
-    constructor(public raw: Response) {}
+    constructor(public raw: Cypress.Response<void>) {}
 
-    async value(): Promise<void> {
-        return undefined;
+    value(): Bluebird.Promise<void> {
+        return new Cypress.Promise((resolve) => resolve(undefined));
     }
 }
 
 export class BlobApiResponse {
-    constructor(public raw: Response) {}
+    constructor(public raw: Cypress.Response<Blob>) {}
 
-    async value(): Promise<Blob> {
-        return await this.raw.blob();
+    value(): Bluebird.Promise<Blob> {
+        return new Cypress.Promise((resolve) => resolve(this.raw.body));
     };
 }
 
 export class TextApiResponse {
-    constructor(public raw: Response) {}
+    constructor(public raw: Cypress.Response<string>) {}
 
-    async value(): Promise<string> {
-        return await this.raw.text();
+    value(): Bluebird.Promise<string> {
+        return new Cypress.Promise((resolve) => resolve(this.raw.body));
     };
 }
