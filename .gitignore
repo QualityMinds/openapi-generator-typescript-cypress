@@ -3,3 +3,4 @@
 **/node_modules/
 /examples/**/cypress/downloads/
 /examples/**/openapi-gen/
+/examples/**/openapitools.json
