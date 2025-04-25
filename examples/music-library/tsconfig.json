@@ -1,10 +1,14 @@
 {
   "compilerOptions": {
-    "target": "esnext",
-    "lib": ["esnext", "dom"],
-    "module": "nodenext",
+    "target": "es5",
+    "lib": ["es5", "dom"],
+    "module": "commonjs",
     "types": ["cypress", "node"],
-    "strict": true
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "noImplicitOverride": true
   },
   "include": ["**/*.ts", "cypress.d.ts"]
 }
