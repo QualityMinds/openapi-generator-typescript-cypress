@@ -1,5 +1,13 @@
 # openapi-generator-typescript-cypress
 
+[TOC]
+
+[[_TOC_]]
+
+__TOC__
+
+:toc:
+
 This project provides an extension of the **[OpenAPI Generator `typescript-fetch`](https://openapi-generator.tech/docs/generators/typescript-fetch)** (sources can be found [here](https://github.com/OpenAPITools/openapi-generator/tree/master/modules/openapi-generator/src/main/resources/typescript-fetch)). It generates API clients, based on [OpenAPI Specifications](https://spec.openapis.org/), which can be used within [Cypress](https://www.cypress.io/) tests.
 
 ## Motivation
