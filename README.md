@@ -1,5 +1,17 @@
 # openapi-generator-typescript-cypress
 
-## Prerequisites
+This project provides an extension of the **[OpenAPI Generator `typescript-fetch`](https://openapi-generator.tech/docs/generators/typescript-fetch)** (sources can be found [here](https://github.com/OpenAPITools/openapi-generator/tree/master/modules/openapi-generator/src/main/resources/typescript-fetch)). It generates API clients, based on [OpenAPI Specifications](https://spec.openapis.org/), which can be used within [Cypress](https://www.cypress.io/) tests.
 
-## Guide
+## Motivation
+
+When implementing tests, we usually apply the _Arrange-Act-Assert_ pattern. It means that we, first, put the application under test (AUT) into a state where we exactly know what to expect after interacting with the AUT (_arrange_). Second, we interact with the AUT and provoke certain behaviour we want to verify (_act_). And third, we verify if our interaction with the AUT resulted in the expected outcome (_assert_).
+
+In the case of automated E2E tests, special care has to be taken for the _arrange_ part when the scenarios to be tested become more complex. Arranging the AUT from the UI is very time-consuming until the app is in the state where we can even start implementing the actual technical test of our respective domain. It is therefore highly recommended not to prepare the AUT from the UI (by interacting with it) but by other means. There are several different options to achieve that. For example, one can restore a DB dump before the AUT is run, or you can prepare the application by sending requests to relevant API endpoints, and others. All of them are legit dependent on the context, the requirements, the domains, infrastructure, etc. of the AUT.
+
+When we use Cypress for implementing automated E2E tests, the tests run in a [Node server process](https://docs.cypress.io/app/get-started/why-cypress#Architecture) inside the browser. Thus, we are in an asynchronous environment where the tests are run, and [promises are used to react on asynchronous operations](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Using_promises). Unfortunately, [Cypress doesn't use native promises but Bluebird promises](https://docs.cypress.io/api/utilities/promise). We cannot simply use `async` functions in Cypress which implies that sending asynchronous requests cannot be realized easily with well established libraries such as [`node-fetch`](https://nodejs.org/en/learn/getting-started/fetch).
+
+If we now want to _arrange_ the UAT by sending some requests to API endpoints we have [OpenAPI Specifications](https://spec.openapis.org/) defined for, we cannot generate API clients by leveraging any of the existing [OpenAPI generators](https://openapi-generator.tech/docs/generators) (such as, e.g., [typescript-fetch](https://openapi-generator.tech/docs/generators/typescript-fetch) or [typescript-node](https://openapi-generator.tech/docs/generators/typescript-node)). This makes us to use [`cy.request`](https://docs.cypress.io/api/commands/request) for sending API requests to our endpoints and implement API clients which can be used within Cypress manually.
+
+This project provides a solution for the described problem and extends the [OpenAPI Generator `typescript-fetch`](https://openapi-generator.tech/docs/generators/typescript-fetch) templates in a way that [`cy.request`](https://docs.cypress.io/api/commands/request) is used for sending the request to the API endpoints, without native promises.
+
+## Usage Guide
