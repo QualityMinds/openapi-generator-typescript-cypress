@@ -1,0 +1,12 @@
+{
+  "name": "music-library-tests",
+  "version": "1.0.0",
+  "scripts": {
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run"
+  },
+  "devDependencies": {
+    "cypress": "^14.3.2",
+    "typescript": "^5.8.3"
+  }
+}
