@@ -15,3 +15,7 @@ If we now want to _arrange_ the UAT by sending some requests to API endpoints we
 This project provides a solution for the described problem and extends the [OpenAPI Generator `typescript-fetch`](https://openapi-generator.tech/docs/generators/typescript-fetch) templates in a way that [`cy.request`](https://docs.cypress.io/api/commands/request) is used for sending the request to the API endpoints, without native promises. Our research revealed that such a functionality was asked for in the community already [here](https://github.com/OpenAPITools/openapi-generator/issues/8008) and [there](https://github.com/OpenAPITools/openapi-generator/issues/11108).
 
 ## Usage Guide
+
+```shell
+npx openapi-generator-cli generate -c openapi-generator-config.json
+```
