@@ -1,0 +1,49 @@
+components:
+  schemas:
+    Artist:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        genre:
+          type: string
+      required:
+        - id
+        - name
+  
+    ArtistInput:
+      type: object
+      properties:
+        name:
+          type: string
+        genre:
+          type: string
+      required:
+        - name
+  
+    Song:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        duration:
+          type: number
+          format: float
+      required:
+        - id
+        - title
+  
+    SongInput:
+      type: object
+      properties:
+        title:
+          type: string
+        duration:
+          type: number
+          format: float
+      required:
+        - title
