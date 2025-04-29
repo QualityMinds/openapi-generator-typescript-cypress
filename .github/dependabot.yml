@@ -12,4 +12,4 @@ updates:
   - package-ecosystem: "npm"
     directory: "examples/music-library" 
     schedule:
-      interval: "daily"
+      interval: "weekly"
