@@ -73,7 +73,7 @@ npm install @openapitools/openapi-generator-cli
 
 #### Valid OpenAPI Specification
 
-To be able to generate an OpenAPI client, a valid OpenAPI specification is needed, of course. Our examples in `examples/` all have it in the respective `api/` folder.
+To be able to generate an OpenAPI client, a valid OpenAPI specification is needed, of course. Our [`examples`](examples)  all have it in the respective `api/` folder.
 
 ### Generate the OpenAPI Client for Cypress
 
