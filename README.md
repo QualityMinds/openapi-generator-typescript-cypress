@@ -2,6 +2,8 @@
 
 This project provides an extension of the **[OpenAPI Generator `typescript-fetch`](https://openapi-generator.tech/docs/generators/typescript-fetch)** (sources can be found [here](https://github.com/OpenAPITools/openapi-generator/tree/master/modules/openapi-generator/src/main/resources/typescript-fetch)). It generates API clients, based on [OpenAPI Specifications](https://spec.openapis.org/), which can be used within [Cypress](https://www.cypress.io/) tests in order to send requests against API endpoints.
 
+🗣️ If you don't need the introductory blabla, then skip the [Motivation](#motivation) section and jump directly to the [Usage Guide](#usage-guide).
+
 ## Motivation
 
 When implementing tests, we usually apply the _Arrange-Act-Assert_ pattern. It means that we, first, put the application under test (AUT) into a state where we exactly know what to expect after interacting with the AUT (_arrange_). Second, we interact with the AUT and provoke certain behaviour we want to verify (_act_). And third, we verify if our interaction with the AUT resulted in the expected outcome (_assert_).
@@ -73,8 +75,109 @@ npm install @openapitools/openapi-generator-cli
 
 To be able to generate an OpenAPI client, a valid OpenAPI specification is needed, of course. Our examples in `examples/` all have it in the respective `api/` folder.
 
-### Generate the OpenAPI Client
+### Generate the OpenAPI Client for Cypress
+
+☝️ Before generating the client, please make sure you satisfy all the previously described requirements. Then follow the instructions here.
+
+#### 1. Download the templates
+
+For being able to generate Cypress-compatible client code you need the templates in the [`typescript-cypress-templates`](typescript-cypress-templates) folder. Therefore, you need to clone this repository:
 
 ```shell
-npx openapi-generator-cli generate --generator-key music-library
+git clone git@github.com:QualityMinds/openapi-generator-typescript-cypress.git
 ```
+
+Afterward, you need to copy the [`typescript-cypress-templates`](typescript-cypress-templates) folder into your Cypress project folder. If you have copied it into the root of your project, then your Cypress project folder structure should look something like this:
+
+```shell
+my-cypress-project
+├── other-subfolders
+└── typescript-cypress-templates
+    ├── apis.mustache
+    ├── modelOneOf.mustache
+    ├── modelOneOfInterfaces.mustache
+    └── runtime.mustache
+```
+
+#### 2. Configure the generator
+
+To generate the client code for Cypress, we recommend using the `openapitools.json` file for proper configuration. With that we make sure the configuration is part of the code.
+
+```json
+{
+  "$schema": "./node_modules/@openapitools/openapi-generator-cli/config.schema.json",
+  "spaces": 2,
+  "generator-cli": {
+    "version": "7.13.0",
+    "generators": {
+      "fancy-api": {
+        "generatorName": "typescript-fetch",
+        "templateDir": "typescript-cypress-templates",
+        "inputSpec": "fancy-api.yaml",
+        "output": "cypress/openapi-gen"
+      }
+    }
+  }
+}
+```
+
+The `openapi-generator-cli` is a node package wrapper for the actual `openapi-generator`. Therefore, the configuration requires the `version` of the generator to be set. The available versions can be found [here](https://github.com/OpenAPITools/openapi-generator/releases). Remove the `version` line and the latest version is taken automatically.
+
+In the `generators` part you can configure multiple generators for different OpenAPI specifications. In the example we  fancy-api`. The provided properties are mandatory and must be present. Otherwise, the generated client code might not be Cypress-compatible.
+
+| Property        | Value                          | Explanation                                                  |
+| --------------- | ------------------------------ | ------------------------------------------------------------ |
+| `generatorName` | `typescript-fetch`             | The name of the used [generator](https://openapi-generator.tech/docs/generators). Since our template extension is based on `typescript-fetch` it must be this value. Otherwise, the generated client code might not be working. |
+| `templateDir`   | `typescript-cypress-templates` | The path to the directory that contains the [`typescript-cypress-templates`](typescript-cypress-templates). If not provided the generated code won't be Cypress-compatible! |
+| `inputSpec`     | `your-api.yaml`                | This is the path to your OpenAPI specification. Instead of `inputSpec` you can also use `glob`. |
+| `output`        | `your-output-folder`           | This is the path to the directory into which the client will be generated. If it doesn't exist the generator creates it. |
+
+#### 3. Generate the client code
+
+To generate the code just execute the following command:
+
+```shell
+npx openapi-generator-cli generate --generator-key fancy-api
+```
+
+The output of a successful generation should be similar to:
+
+```shell
+npx openapi-generator-cli generate --generator-key fancy-api
+
+Did set selected version to 7.13.0
+[[fancy-api] fancy-api.yaml] [main] INFO  o.o.codegen.DefaultGenerator - Generating with dryRun=false
+[[fancy-api] fancy-api.yaml] [main] INFO  o.o.c.ignore.CodegenIgnoreProcessor - Output directory (/fancy-api-project/cypress/openapi-gen) does not exist, or is inaccessible. No file (.openapi-generator-ignore) will be evaluated.
+[[fancy-api] fancy-api.yaml] [main] INFO  o.o.codegen.DefaultGenerator - OpenAPI Generator: typescript-fetch (client)
+[[fancy-api] fancy-api.yaml] [main] INFO  o.o.codegen.DefaultGenerator - Generator 'typescript-fetch' is considered stable.
+[[fancy-api] fancy-api.yaml] [main] INFO  o.o.c.l.AbstractTypeScriptClientCodegen - Hint: Environment variable 'TS_POST_PROCESS_FILE' (optional) not defined. E.g. to format the source code, please try 'export TS_POST_PROCESS_FILE="/usr/local/bin/prettier --write"' (Linux/Mac)
+[[fancy-api] fancy-api.yaml] [main] INFO  o.o.c.l.AbstractTypeScriptClientCodegen - Note: To enable file post-processing, 'enablePostProcessFile' must be set to `true` (--enable-post-process-file for CLI).
+[[fancy-api] fancy-api.yaml] [main] WARN  o.o.codegen.DefaultCodegen - The value (generator's option) must be either boolean or string. Default to `false`.
+[[fancy-api] fancy-api.yaml] [main] INFO  o.o.codegen.utils.URLPathUtils - 'host' (OAS 2.0) or 'servers' (OAS 3.0) not defined in the spec. Default to [http://localhost] for server URL [http://localhost/api/fancy-api]
+[[fancy-api] fancy-api.yaml] [main] INFO  o.o.codegen.utils.URLPathUtils - 'host' (OAS 2.0) or 'servers' (OAS 3.0) not defined in the spec. Default to [http://localhost] for server URL [http://localhost/api/fancy-api]
+[[fancy-api] fancy-api.yaml] [main] INFO  o.o.codegen.TemplateManager - writing file /fancy-api-project/cypress/openapi-gen/models/Artist.ts
+[[fancy-api] fancy-api.yaml] [main] INFO  o.o.codegen.TemplateManager - writing file /fancy-api-project/cypress/openapi-gen/models/ArtistInput.ts
+[[fancy-api] fancy-api.yaml] [main] INFO  o.o.codegen.TemplateManager - writing file /fancy-api-project/cypress/openapi-gen/models/Song.ts
+[[fancy-api] fancy-api.yaml] [main] INFO  o.o.codegen.TemplateManager - writing file /fancy-api-project/cypress/openapi-gen/models/SongInput.ts
+[[fancy-api] fancy-api.yaml] [main] INFO  o.o.codegen.utils.URLPathUtils - 'host' (OAS 2.0) or 'servers' (OAS 3.0) not defined in the spec. Default to [http://localhost] for server URL [http://localhost/api/fancy-api]
+[[fancy-api] fancy-api.yaml] [main] INFO  o.o.codegen.TemplateManager - writing file /fancy-api-project/cypress/openapi-gen/apis/ArtistApi.ts
+[[fancy-api] fancy-api.yaml] [main] INFO  o.o.codegen.utils.URLPathUtils - 'host' (OAS 2.0) or 'servers' (OAS 3.0) not defined in the spec. Default to [http://localhost] for server URL [http://localhost/api/fancy-api]
+[[fancy-api] fancy-api.yaml] [main] INFO  o.o.codegen.TemplateManager - writing file /fancy-api-project/cypress/openapi-gen/index.ts
+[[fancy-api] fancy-api.yaml] [main] INFO  o.o.codegen.TemplateManager - writing file /fancy-api-project/cypress/openapi-gen/runtime.ts
+[[fancy-api] fancy-api.yaml] [main] INFO  o.o.codegen.TemplateManager - writing file /fancy-api-project/cypress/openapi-gen/models/index.ts
+[[fancy-api] fancy-api.yaml] [main] INFO  o.o.codegen.TemplateManager - writing file /fancy-api-project/cypress/openapi-gen/apis/index.ts
+[[fancy-api] fancy-api.yaml] [main] INFO  o.o.codegen.TemplateManager - writing file /fancy-api-project/cypress/openapi-gen/.openapi-generator-ignore
+[[fancy-api] fancy-api.yaml] [main] INFO  o.o.codegen.TemplateManager - writing file /fancy-api-project/cypress/openapi-gen/.openapi-generator/VERSION
+[[fancy-api] fancy-api.yaml] [main] INFO  o.o.codegen.TemplateManager - writing file /fancy-api-project/cypress/openapi-gen/.openapi-generator/FILES
+[[fancy-api] fancy-api.yaml] ################################################################################
+[[fancy-api] fancy-api.yaml] # Thanks for using OpenAPI Generator.                                          #
+[[fancy-api] fancy-api.yaml] # Please consider donation to help us maintain this project 🙏                 #
+[[fancy-api] fancy-api.yaml] # https://opencollective.com/openapi_generator/donate                          #
+[[fancy-api] fancy-api.yaml] ################################################################################
+[[fancy-api] fancy-api.yaml] java -jar "/fancy-api-project/node_modules/@openapitools/openapi-generator-cli/versions/7.13.0.jar" generate --input-spec="fancy-api.yaml" --generator-name="typescript-fetch" --template-dir="typescript-cypress-templates" --output="cypress/openapi-gen" exited with code 0
+[fancy-api] fancy-api.yaml
+```
+
+## Examples
+
+You can find examples in the [`examples`](examples) folder.
