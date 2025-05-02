@@ -8,7 +8,7 @@
     "api:build": "openapi-generator-cli generate --generator-key music-library",
     "api:rebuild": "npm run clean && npm run api:build",
     "prism:mock": "prism mock -d api/music-library.yaml",
-    "ci": "start-test prism:mock http://127.0.0.1:4010/health cy:open"
+    "test:mock": "start-test prism:mock http://127.0.0.1:4010/health cy:run"
   },
   "devDependencies": {
     "@openapitools/openapi-generator-cli": "^2.20.0",
