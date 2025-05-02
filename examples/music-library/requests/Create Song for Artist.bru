@@ -1,0 +1,22 @@
+meta {
+  name: Create Song for Artist
+  type: http
+  seq: 5
+}
+
+post {
+  url: http://127.0.0.1:4010/artists/:artistId/songs
+  body: json
+  auth: none
+}
+
+params:path {
+  artistId: 123
+}
+
+body:json {
+  {
+    "title": "Bla Bla Hahahaa",
+    "duration": 2.5
+  }
+}

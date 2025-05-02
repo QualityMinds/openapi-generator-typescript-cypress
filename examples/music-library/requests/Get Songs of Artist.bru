@@ -1,0 +1,15 @@
+meta {
+  name: Get Songs of Artist
+  type: http
+  seq: 6
+}
+
+get {
+  url: http://127.0.0.1:4010/artists/:artistId/songs
+  body: none
+  auth: none
+}
+
+params:path {
+  artistId: 4356
+}

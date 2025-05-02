@@ -1,0 +1,15 @@
+meta {
+  name: Delete Artist
+  type: http
+  seq: 4
+}
+
+delete {
+  url: http://127.0.0.1:4010/artists/:artistId
+  body: none
+  auth: none
+}
+
+params:path {
+  artistId: 666
+}

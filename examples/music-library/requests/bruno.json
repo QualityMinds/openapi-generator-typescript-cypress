@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "Cypress OpenAPI Generator",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}

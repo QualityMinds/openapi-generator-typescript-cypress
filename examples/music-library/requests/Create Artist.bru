@@ -1,0 +1,18 @@
+meta {
+  name: Create Artist
+  type: http
+  seq: 3
+}
+
+post {
+  url: http://127.0.0.1:4010/artists
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "name": "Chuck Norris",
+    "genre": "THE genre"
+  }
+}
