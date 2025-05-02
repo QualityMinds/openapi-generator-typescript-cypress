@@ -6,7 +6,7 @@
     "cy:run": "cypress run"
   },
   "devDependencies": {
-    "@openapitools/openapi-generator-cli": "^2.19.1",
+    "@openapitools/openapi-generator-cli": "^2.20.0",
     "cypress": "^14.3.2",
     "typescript": "^5.8.3"
   }
