@@ -16,7 +16,9 @@ This project provides a solution for the described problem and extends the [Open
 
 ## Usage Guide
 
-### Prerequisite: Cypress project
+### Prerequisites
+
+#### Cypress project
 
 For the generated code to work correctly, we need a working Cypress project. If you already have one, then you can skip to the next section.
 If not, you can initialize a new Cypress project as follows.
@@ -57,10 +59,22 @@ You can now start Cypress the first time with the following command:
 npm run cy:open
 ```
 
-You need to set it up when run the first time. The result is a running Cypress project. 
+You need to set it up when run the first time. The result is a running Cypress project.
+
+#### openapi-generator-cli
+
+To be able to use the OpenAPI generator, the following package is required:
+
+```shell
+npm install @openapitools/openapi-generator-cli
+```
+
+#### Valid OpenAPI Specification
+
+To be able to generate an OpenAPI client, a valid OpenAPI specification is needed, of course. Our examples in `examples/` all have it in the respective `api/` folder.
 
 ### Generate the OpenAPI Client
 
 ```shell
-npx openapi-generator-cli generate -c openapi-generator-config.json
+npx openapi-generator-cli generate --generator-key music-library
 ```
