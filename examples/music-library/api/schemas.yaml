@@ -4,7 +4,7 @@ components:
       type: object
       properties:
         id:
-          type: string
+          type: integer
         name:
           type: string
         genre:
@@ -27,7 +27,7 @@ components:
       type: object
       properties:
         id:
-          type: string
+          type: integer
         title:
           type: string
         duration:
