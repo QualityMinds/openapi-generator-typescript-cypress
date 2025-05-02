@@ -16,6 +16,51 @@ This project provides a solution for the described problem and extends the [Open
 
 ## Usage Guide
 
+### Prerequisite: Cypress project
+
+For the generated code to work correctly, we need a working Cypress project. If you already have one, then you can skip to the next section.
+If not, you can initialize a new Cypress project as follows.
+
+```shell
+# initialize new project
+npm init -y
+# install Typescript
+npm install --save-dev typescript @types/node
+# install Cypress package dependencies
+npm install cypress
+# initialize Typescript as of https://docs.cypress.io/app/tooling/typescript-support#Configure-tsconfigjson
+npx tsc --init --target ES5 --lib es5,dom --types cypress,node --sourceMap true
+# install Cypress runtime
+npx cypress install
+```
+
+In the `tsconfig.json` the `"include": ["**/*.ts"]` needs to be added according to the recommendation [here](https://docs.cypress.io/app/tooling/typescript-support#Configure-tsconfigjson). Either do it manually or execute the following command if you are on a Mac and have `sed` command available:
+
+```shell
+sed -i '' -e '$s/}$/,/' -e '$a\
+  "include": ["**/*.ts"]\
+}' tsconfig.json
+```
+
+Adjust the `scripts` in the `package.json` so that we have the following commands available:
+
+```json
+"scripts": {
+    "cy:open": "cypress open",
+    "cy:run": "cypress run"
+}
+```
+
+You can now start Cypress the first time with the following command:
+
+```shell
+npm run cy:open
+```
+
+You need to set it up when run the first time. The result is a running Cypress project. 
+
+### Generate the OpenAPI Client
+
 ```shell
 npx openapi-generator-cli generate -c openapi-generator-config.json
 ```
