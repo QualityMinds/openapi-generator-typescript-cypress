@@ -1,5 +1,7 @@
 /.idea/
 **/*.iml
+**/.DS_Store
+
 **/node_modules/
 /examples/**/cypress/downloads/
 /examples/**/openapi-gen/
