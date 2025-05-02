@@ -1,0 +1,30 @@
+name: Music Library - API Build and E2E Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  e2e-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v3
+
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      - name: 🛠️ Build API client
+        run: npm run api:build
+
+      - name: 🧪 Run Cypress tests with Prism mock
+        run: npm run test:mock
