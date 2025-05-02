@@ -6,7 +6,7 @@
     "generators": {
       "music-library": {
         "generatorName": "typescript-fetch",
-        "templateDir": "../../templates",
+        "templateDir": "../../typescript-cypress-templates",
         "inputSpec": "api/music-library.yaml",
         "output": "cypress/openapi-gen"
       }
