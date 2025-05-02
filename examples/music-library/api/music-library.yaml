@@ -7,6 +7,15 @@ servers:
   - url: '/api/music-library'
     
 paths:
+  /health:
+    head: 
+      summary: API health check
+      tags:
+        - artist
+      operationId: healthCheck
+      responses: 
+        '200':
+          description: Returns when API server is running
   /artists:
     get:
       summary: Get all artists
