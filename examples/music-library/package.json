@@ -2,8 +2,8 @@
   "name": "music-library-tests",
   "version": "1.0.0",
   "scripts": {
-    "cypress:open": "cypress open",
-    "cypress:run": "cypress run"
+    "cy:open": "cypress open",
+    "cy:run": "cypress run"
   },
   "devDependencies": {
     "@openapitools/openapi-generator-cli": "^2.19.1",
