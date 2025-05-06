@@ -1,21 +1,140 @@
-import {ArtistApi, Configuration} from "../openapi-gen";
+import {ArtistApi, Configuration, CreateArtistRequest, SongInput} from "../openapi-gen";
+import { faker } from '@faker-js/faker';
 
 context('Music Library API requests', () => {
 
-    const config = new Configuration({
-        basePath: 'http://127.0.0.1:4010'
-    });
-    
     let artistsApi: ArtistApi;
     
     beforeEach(() => {
-       artistsApi = new ArtistApi(config); 
+       artistsApi = new ArtistApi(new Configuration({basePath: 'http://127.0.0.1:4010'})); 
     });
     
-    it('should GET all artists', () => {
-        artistsApi.getArtists().then(response => {
-            expect(response).not.to.be.undefined;
-            expect(response).to.be.an('array');
+    context('API health check', () => {
+
+        it('should HEAD health', () => {
+            artistsApi.healthCheck();
+        });
+
+        it('should HEAD health raw', () => {
+            artistsApi.healthCheckRaw().then((apiResponse) => {
+                expect(apiResponse.raw.status).to.eq(200);
+                expect(apiResponse.raw.isOkStatusCode).to.eq(true);
+            });
+        });
+    });
+    
+    context('Get all artists', () => {
+        
+        it('should GET all artists', () => {
+            artistsApi.getArtists().then(response => {
+                expect(response).not.to.be.undefined;
+                expect(response).to.be.an('array');
+            });
+        });
+    
+        it('should GET all artists raw', () => {
+            artistsApi.getArtistsRaw().then(apiResponse => {
+                expect(apiResponse.raw.status).to.eq(200);
+                expect(apiResponse.raw.isOkStatusCode).to.eq(true);
+                apiResponse.value().then(response => {
+                    expect(response).not.to.be.undefined;
+                    expect(response).to.be.an('array');
+                })
+            });
+        });
+        
+    });
+
+    context('Create a new artist', () => {
+        
+        const artistInput: CreateArtistRequest = {
+            artistInput: {
+                name: `${faker.person.fullName()}`,
+                genre: `${faker.music.genre()}`,
+            }       
+        };
+        it('should POST new artist', () => {
+            artistsApi.createArtist(artistInput).then(response => {
+                expect(response).not.to.be.undefined;
+                expect(response).to.be.an('object');
+                expect(response.id).to.be.a('number');
+            });
+        });
+        
+        it('should POST new artist raw', () => {
+            artistsApi.createArtistRaw(artistInput).then(apiResponse => {
+                expect(apiResponse.raw.status).to.eq(201);
+                expect(apiResponse.raw.isOkStatusCode).to.eq(true);
+                apiResponse.value().then(response => {
+                    expect(response).not.to.be.undefined;
+                    expect(response).to.be.an('object');
+                    expect(response.id).to.be.a('number');
+                });
+            });
+        });
+    });
+
+    context('Delete an artist by ID', () => {
+        
+        it('should DELETE artist', () => {
+            artistsApi.deleteArtist({ artistId: faker.number.int() });
+        });
+    
+        it('should DELETE artist raw', () => {
+            artistsApi.deleteArtistRaw({ artistId: faker.number.int() }).then((apiResponse) => {
+                expect(apiResponse.raw.status).to.eq(204);
+                expect(apiResponse.raw.isOkStatusCode).to.eq(true);
+            });
+        });
+        
+    });
+    
+    context('Add a song to an artist', () => {
+        
+        const songInput: SongInput = {
+            title: `${faker.music.songName()}`,
+            duration: 3.33
+        };
+        
+        it('should POST song', () => {
+            artistsApi.createSongForArtist({ artistId: faker.number.int(), songInput: songInput }).then(response => {
+                expect(response).not.to.be.undefined;
+                expect(response).to.be.an('object');
+                expect(response.id).to.be.a('number');
+            })
+        });
+
+        it('should POST song raw', () => {
+            artistsApi.createSongForArtistRaw({ artistId: faker.number.int(), songInput: songInput }).then(apiResponse => {
+                expect(apiResponse.raw.status).to.eq(201);
+                expect(apiResponse.raw.isOkStatusCode).to.eq(true);
+                apiResponse.value().then(response => {
+                    expect(response).not.to.be.undefined;
+                    expect(response).to.be.an('object');
+                    expect(response.id).to.be.a('number');
+                });
+            });
+        });
+    });
+    
+    context('Get all songs by an artist', () => {
+
+        it('should GET songs of artist', () => {
+            artistsApi.getSongsOfArtist({ artistId: faker.number.int() }).then(response => {
+                expect(response).not.to.be.undefined;
+                expect(response).to.be.an('array');
+            });
+        });
+
+        it('should GET songs of artist raw', () => {
+            artistsApi.getSongsOfArtistRaw({ artistId: faker.number.int() }).then(apiResponse => {
+                expect(apiResponse.raw.status).to.eq(200);
+                expect(apiResponse.raw.isOkStatusCode).to.eq(true);
+                apiResponse.value().then(response => {
+                    expect(response).not.to.be.undefined;
+                    expect(response).to.be.an('array');
+                });
+            });
         });
     });
 });
