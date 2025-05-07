@@ -150,18 +150,11 @@ Did set selected version to 7.13.0
 [[fancy-api] fancy-api.yaml] [main] INFO  o.o.c.ignore.CodegenIgnoreProcessor - Output directory (/fancy-api-project/cypress/openapi-gen) does not exist, or is inaccessible. No file (.openapi-generator-ignore) will be evaluated.
 [[fancy-api] fancy-api.yaml] [main] INFO  o.o.codegen.DefaultGenerator - OpenAPI Generator: typescript-fetch (client)
 [[fancy-api] fancy-api.yaml] [main] INFO  o.o.codegen.DefaultGenerator - Generator 'typescript-fetch' is considered stable.
-[[fancy-api] fancy-api.yaml] [main] INFO  o.o.c.l.AbstractTypeScriptClientCodegen - Hint: Environment variable 'TS_POST_PROCESS_FILE' (optional) not defined. E.g. to format the source code, please try 'export TS_POST_PROCESS_FILE="/usr/local/bin/prettier --write"' (Linux/Mac)
-[[fancy-api] fancy-api.yaml] [main] INFO  o.o.c.l.AbstractTypeScriptClientCodegen - Note: To enable file post-processing, 'enablePostProcessFile' must be set to `true` (--enable-post-process-file for CLI).
-[[fancy-api] fancy-api.yaml] [main] WARN  o.o.codegen.DefaultCodegen - The value (generator's option) must be either boolean or string. Default to `false`.
-[[fancy-api] fancy-api.yaml] [main] INFO  o.o.codegen.utils.URLPathUtils - 'host' (OAS 2.0) or 'servers' (OAS 3.0) not defined in the spec. Default to [http://localhost] for server URL [http://localhost/api/fancy-api]
-[[fancy-api] fancy-api.yaml] [main] INFO  o.o.codegen.utils.URLPathUtils - 'host' (OAS 2.0) or 'servers' (OAS 3.0) not defined in the spec. Default to [http://localhost] for server URL [http://localhost/api/fancy-api]
 [[fancy-api] fancy-api.yaml] [main] INFO  o.o.codegen.TemplateManager - writing file /fancy-api-project/cypress/openapi-gen/models/Artist.ts
 [[fancy-api] fancy-api.yaml] [main] INFO  o.o.codegen.TemplateManager - writing file /fancy-api-project/cypress/openapi-gen/models/ArtistInput.ts
 [[fancy-api] fancy-api.yaml] [main] INFO  o.o.codegen.TemplateManager - writing file /fancy-api-project/cypress/openapi-gen/models/Song.ts
 [[fancy-api] fancy-api.yaml] [main] INFO  o.o.codegen.TemplateManager - writing file /fancy-api-project/cypress/openapi-gen/models/SongInput.ts
-[[fancy-api] fancy-api.yaml] [main] INFO  o.o.codegen.utils.URLPathUtils - 'host' (OAS 2.0) or 'servers' (OAS 3.0) not defined in the spec. Default to [http://localhost] for server URL [http://localhost/api/fancy-api]
 [[fancy-api] fancy-api.yaml] [main] INFO  o.o.codegen.TemplateManager - writing file /fancy-api-project/cypress/openapi-gen/apis/ArtistApi.ts
-[[fancy-api] fancy-api.yaml] [main] INFO  o.o.codegen.utils.URLPathUtils - 'host' (OAS 2.0) or 'servers' (OAS 3.0) not defined in the spec. Default to [http://localhost] for server URL [http://localhost/api/fancy-api]
 [[fancy-api] fancy-api.yaml] [main] INFO  o.o.codegen.TemplateManager - writing file /fancy-api-project/cypress/openapi-gen/index.ts
 [[fancy-api] fancy-api.yaml] [main] INFO  o.o.codegen.TemplateManager - writing file /fancy-api-project/cypress/openapi-gen/runtime.ts
 [[fancy-api] fancy-api.yaml] [main] INFO  o.o.codegen.TemplateManager - writing file /fancy-api-project/cypress/openapi-gen/models/index.ts
