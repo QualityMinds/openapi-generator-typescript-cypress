@@ -137,4 +137,26 @@ context('Music Library API requests', () => {
             });
         });
     });
+
+    context('Get the name of the current API release', () => {
+
+        it('should GET release name', () => {
+            artistsApi.getReleaseName().then(response => {
+                expect(response).not.to.be.undefined;
+                expect(response).to.be.an('string');
+            });
+        });
+
+        it('should GET release name raw', () => {
+            artistsApi.getReleaseNameRaw().then(apiResponse => {
+                expect(apiResponse.raw.status).to.eq(200);
+                expect(apiResponse.raw.isOkStatusCode).to.eq(true);
+                apiResponse.value().then(response => {
+                    expect(response).not.to.be.undefined;
+                    expect(response).to.be.a('string');
+                })
+            });
+        });
+
+    });
 });
