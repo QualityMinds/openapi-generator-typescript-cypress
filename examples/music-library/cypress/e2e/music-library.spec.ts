@@ -51,6 +51,7 @@ context('Music Library API requests', () => {
             artistInput: {
                 name: `${faker.person.fullName()}`,
                 genre: `${faker.music.genre()}`,
+                profilePicture: `${Buffer.from(faker.image.avatar()).toString('base64')}`,
             }       
         };
         it('should POST new artist', () => {
@@ -158,5 +159,27 @@ context('Music Library API requests', () => {
             });
         });
 
+    });
+
+    context('Get profile picture of artist', () => {
+
+        it('should GET profile picture', () => {
+            artistsApi.getProfilePictureOfArtist({ artistId: faker.number.int() }).then(response => {
+                expect(response).not.to.be.undefined;
+                expect(response).to.be.a('string');
+            });
+        });
+
+        it('should GET profile picture raw', () => {
+            artistsApi.getProfilePictureOfArtistRaw({ artistId: faker.number.int() }).then(apiResponse => {
+                expect(apiResponse.raw.status).to.eq(200);
+                expect(apiResponse.raw.isOkStatusCode).to.eq(true);
+                expect(apiResponse.raw.headers['content-type']).to.equal('image/png');
+                apiResponse.value().then(response => {
+                    expect(response).not.to.be.undefined;
+                    expect(response).to.be.a('string');
+                });
+            });
+        });
     });
 });
