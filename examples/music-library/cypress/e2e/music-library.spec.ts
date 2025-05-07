@@ -17,7 +17,8 @@ context('Music Library API requests', () => {
 
         it('should HEAD health raw', () => {
             artistsApi.healthCheckRaw().then((apiResponse) => {
-                expect(apiResponse.raw.status).to.eq(200);
+                // TODO: intentionally expect wrong return code
+                expect(apiResponse.raw.status).to.eq(201);
                 expect(apiResponse.raw.isOkStatusCode).to.eq(true);
             });
         });
