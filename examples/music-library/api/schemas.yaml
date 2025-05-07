@@ -20,6 +20,9 @@ components:
           type: string
         genre:
           type: string
+        profilePicture:
+          type: string
+          format: byte
       required:
         - name
   

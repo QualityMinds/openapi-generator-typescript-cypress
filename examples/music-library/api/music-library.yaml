@@ -113,6 +113,30 @@ paths:
                 items:
                   $ref: 'schemas.yaml#/components/schemas/Song'
   
+  /artists/{artistId}/profilePicture:
+    get: 
+      summary: Get profile picture of artist
+      tags:
+        - artist
+      operationId: getProfilePictureOfArtist
+      parameters:
+        - name: artistId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses: 
+        200:
+          description: profile picture
+          content:
+            image/png:
+              schema: 
+                type: string
+                format: binary
+        404:
+          description: Artist or profile picture not found
+            
+  
   /releaseName:
     get: 
       summary: Get the name of the current API release
