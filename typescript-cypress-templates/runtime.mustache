@@ -110,7 +110,7 @@ export class BaseAPI {
         return BaseAPI.jsonRegex.test(mime);
     }
 
-    protected request<ResponseBodyType>(context: RequestOpts, initOverrides?: RequestInit | InitOverrideFunction): Bluebird.Promise<Cypress.Response<ResponseBodyType>> {
+    protected request<ResponseBodyType>(context: RequestOpts, initOverrides?: RequestInit | InitOverrideFunction): Cypress.Chainable<Cypress.Response<ResponseBodyType>> {
         if (this.configuration.accessToken) {
             context.headers = context.headers || {};
             context.headers['Authorization'] = `Bearer ${this.configuration.accessToken}`;
@@ -134,13 +134,11 @@ export class BaseAPI {
             }
         }
 
-        return new Cypress.Promise((resolve, reject) => {
-            cy.request<ResponseBodyType>(options).then(response => {
-                if (response.isOkStatusCode) {
-                    return resolve(response);
-                }
-                return reject("Response returned an error code");
-            });
+        return cy.request<ResponseBodyType>(options).then(response => {
+            if (response.isOkStatusCode) {
+                return response;
+            }
+            throw new Error(`Request failed with status ${response.status}`);
         });
     }
     
@@ -339,48 +337,48 @@ export interface ErrorContext {
 }
 
 export interface Middleware {
-    pre?(context: RequestContext): Bluebird.Promise<FetchParams | void>;
-    post?(context: ResponseContext): Bluebird.Promise<Response | void>;
-    onError?(context: ErrorContext): Bluebird.Promise<Response | void>;
+    pre?(context: RequestContext): Cypress.Chainable<FetchParams | void>;
+    post?(context: ResponseContext): Cypress.Chainable<Response | void>;
+    onError?(context: ErrorContext): Cypress.Chainable<Response | void>;
 }
 
 export interface ApiResponse<T> {
     raw: Cypress.Response<T>;
-    value(): Bluebird.Promise<T>;
+    value(): Cypress.Chainable<T>;
 }
 
 export interface ResponseTransformer<T> {
     (json: any): T;
 }
 
-export class JSONApiResponse<T> {
+export class JSONApiResponse<T> implements ApiResponse<T> {
     constructor(public raw: Cypress.Response<T>, private transformer: ResponseTransformer<T> = (jsonValue: any) => jsonValue) {}
 
-    value(): Bluebird.Promise<T> {
-        return new Cypress.Promise((resolve) => resolve(this.transformer(this.raw.body)));
+    value(): Cypress.Chainable<T> { 
+        return cy.wrap(this.transformer(this.raw.body), { log: false });
     }
 }
 
-export class VoidApiResponse {
+export class VoidApiResponse implements ApiResponse<void> {
     constructor(public raw: Cypress.Response<void>) {}
 
-    value(): Bluebird.Promise<void> {
-        return new Cypress.Promise((resolve) => resolve(undefined));
+    value(): Cypress.Chainable<void> {
+        return cy.wrap(undefined as void, { log: false });
     }
 }
 
-export class BlobApiResponse {
+export class BlobApiResponse implements ApiResponse<Blob> {
     constructor(public raw: Cypress.Response<Blob>) {}
 
-    value(): Bluebird.Promise<Blob> {
-        return new Cypress.Promise((resolve) => resolve(this.raw.body));
+    value(): Cypress.Chainable<Blob> {
+        return cy.wrap(this.raw.body, { log: false });
     };
 }
 
-export class TextApiResponse {
+export class TextApiResponse implements ApiResponse<string> {
     constructor(public raw: Cypress.Response<string>) {}
 
-    value(): Bluebird.Promise<string> {
-        return new Cypress.Promise((resolve) => resolve(this.raw.body));
+    value(): Cypress.Chainable<string> {
+        return cy.wrap(this.raw.body, { log: false });
     };
 }
