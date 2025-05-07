@@ -112,3 +112,17 @@ paths:
                 type: array
                 items:
                   $ref: 'schemas.yaml#/components/schemas/Song'
+  
+  /releaseName:
+    get: 
+      summary: Get the name of the current API release
+      tags:
+        - artist
+      operationId: getReleaseName
+      responses: 
+        200:
+          description: Release name
+          content:
+            text/plain:
+              schema: 
+                type: string
