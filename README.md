@@ -75,6 +75,38 @@ npm install @openapitools/openapi-generator-cli
 
 To be able to generate an OpenAPI client, a valid OpenAPI specification is needed, of course. Our [`examples`](examples)  all have it in the respective `api/` folder.
 
+### Download or Update the Templates into Your Project
+
+You can copy or update the [`typescript-cypress-templates`](typescript-cypress-templates) folder from this repository into your own local project using a one-line CLI command:
+
+```bash
+npx github:QualityMinds/openapi-generator-typescript-cypress
+```
+
+This will clone the latest version of the templates into a local folder named `typescript-cypress-templates` in your current directory. Run this command multiple times to keep your templates up to date with the latest version from this repository.
+
+#### Optional: Use a Custom Target Folder
+
+If you want the templates to be copied into a different folder name, simply provide it as a command-line argument:
+
+```bash
+npx github:QualityMinds/openapi-generator-typescript-cypress my-custom-folder
+```
+
+This command will copy the templates into `./my-custom-folder`.
+
+#### Cleanup and Overwrite
+
+The script will:
+- Download the templates to a temporary directory
+- Overwrite the target folder if it already exists
+- Clean up all temporary files after execution
+
+#### Requirements
+
+- `git` must be available in your environment (used to clone the repo)
+- Node.js (v22 or higher recommended)
+
 ### Generate the OpenAPI Client for Cypress
 
 ☝️ Before generating the client, please make sure you satisfy all the previously described requirements. Then follow the instructions here.
