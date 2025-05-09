@@ -1,0 +1,14 @@
+{
+  "name": "openapi-generator-typescript-cypress",
+  "version": "1.0.0",
+  "description": "CLI to sync typescript-cypress-templates",
+  "bin": {
+    "update-templates": "./cli/update-templates.js"
+  },
+  "type": "module",
+  "scripts": {},
+  "dependencies": {
+    "execa": "^9.5.3",
+    "fs-extra": "^11.3.0"
+  }
+}

@@ -125,12 +125,12 @@ The `openapi-generator-cli` is a node package wrapper for the actual `openapi-ge
 
 In the `generators` part you can configure multiple generators for different OpenAPI specifications. In the example we  fancy-api`. The provided properties are mandatory and must be present. Otherwise, the generated client code might not be Cypress-compatible.
 
-| Property        | Value                          | Explanation                                                  |
-| --------------- | ------------------------------ | ------------------------------------------------------------ |
-| `generatorName` | `typescript-fetch`             | The name of the used [generator](https://openapi-generator.tech/docs/generators). Since our template extension is based on `typescript-fetch` it must be this value. Otherwise, the generated client code might not be working. |
-| `templateDir`   | `typescript-cypress-templates` | The path to the directory that contains the [`typescript-cypress-templates`](typescript-cypress-templates). If not provided the generated code won't be Cypress-compatible! |
-| `inputSpec`     | `your-api.yaml`                | This is the path to your OpenAPI specification. Instead of `inputSpec` you can also use `glob`. |
-| `output`        | `your-output-folder`           | This is the path to the directory into which the client will be generated. If it doesn't exist the generator creates it. |
+| Property        | Value                          | Explanation                                                                                                                                                                                                                                             |
+| --------------- | ------------------------------ |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `generatorName` | `typescript-fetch`             | The name of the used [generator](https://openapi-generator.tech/docs/generators). Since our template extension is based on `typescript-fetch` it must be this value. Otherwise, the generated client code might not be working.                         |
+| `templateDir`   | `typescript-cypress-templates` | The path to the directory that contains the [`typescript-cypress-templates`](typescript-cypress-templates). If not provided the generated code won't be Cypress-compatible! Change this value if your template-containging folder is named differently. |
+| `inputSpec`     | `your-api.yaml`                | This is the path to your OpenAPI specification. Instead of `inputSpec` you can also use `glob`.                                                                                                                                                         |
+| `output`        | `your-output-folder`           | This is the path to the directory into which the client will be generated. If it doesn't exist the generator creates it.                                                                                                                                |
 
 #### 3. Generate the client code
 
