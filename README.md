@@ -197,3 +197,32 @@ Did set selected version to 7.13.0
 ## Examples
 
 You can find examples in the [`examples`](examples) folder.
+
+## Contributing
+
+Contributions are welcome! Please read our [contributing guidelines](CONTRIBUTING.md) before opening an issue or pull request.
+
+## License
+
+This project is licensed under the [Apache License 2.0](LICENSE). You are free to use, modify, and distribute it under the terms of that license.
+
+## Cyber Resilience Act (CRA) Notice
+
+This project provides template files that extend the `@openapitools/openapi-generator-cli` for generating TypeScript API clients compatible with Cypress.
+
+**Important Notice regarding the EU Cyber Resilience Act (CRA):**  
+This project is a *developer tool* and **does not constitute a "product with digital elements"** as defined under the CRA. It is not executed in production environments, nor does it process data during runtime.
+
+The responsibility for the security, compliance, and correctness of the generated code lies entirely with the user. If the generated clients are used in safety-critical or regulated domains, users must perform their own security and compliance assessments.
+
+## Disclaimer of Liability
+
+This project provides templates and helper scripts on an "as-is" basis, without any warranties.
+
+The maintainers do **not accept any liability** for:
+
+- the security or correctness of generated clients,
+- compatibility with specific OpenAPI specifications,
+- suitability for use in any specific technical or regulatory context.
+
+Use of this project is at your own risk. Always validate generated code in accordance with your organization’s quality and security standards.
