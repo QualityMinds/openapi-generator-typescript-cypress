@@ -85,6 +85,18 @@ npx github:QualityMinds/openapi-generator-typescript-cypress
 
 This will clone the latest version of the templates into a local folder named `typescript-cypress-templates` in your current directory. Run this command multiple times to keep your templates up to date with the latest version from this repository.
 
+If you have copied it into the root of your project, then your Cypress project folder structure should look something like this:
+
+```shell
+my-cypress-project
+├── other-subfolders
+└── typescript-cypress-templates
+    ├── apis.mustache
+    ├── modelOneOf.mustache
+    ├── modelOneOfInterfaces.mustache
+    └── runtime.mustache
+```
+
 #### Optional: Use a Custom Target Folder
 
 If you want the templates to be copied into a different folder name, simply provide it as a command-line argument:
@@ -102,34 +114,13 @@ The script will:
 - Overwrite the target folder if it already exists
 - Clean up all temporary files after execution
 
-#### Requirements
-
-- `git` must be available in your environment (used to clone the repo)
-- Node.js (v22 or higher recommended)
-
 ### Generate the OpenAPI Client for Cypress
 
 ☝️ Before generating the client, please make sure you satisfy all the previously described requirements. Then follow the instructions here.
 
 #### 1. Download the templates
 
-For being able to generate Cypress-compatible client code you need the templates in the [`typescript-cypress-templates`](typescript-cypress-templates) folder. Therefore, you need to clone this repository:
-
-```shell
-git clone git@github.com:QualityMinds/openapi-generator-typescript-cypress.git
-```
-
-Afterward, you need to copy the [`typescript-cypress-templates`](typescript-cypress-templates) folder into your Cypress project folder. If you have copied it into the root of your project, then your Cypress project folder structure should look something like this:
-
-```shell
-my-cypress-project
-├── other-subfolders
-└── typescript-cypress-templates
-    ├── apis.mustache
-    ├── modelOneOf.mustache
-    ├── modelOneOfInterfaces.mustache
-    └── runtime.mustache
-```
+Download our update the templates as described in the [previous section](#download-or-update-the-templates-into-your-project).
 
 #### 2. Configure the generator
 
@@ -157,16 +148,16 @@ The `openapi-generator-cli` is a node package wrapper for the actual `openapi-ge
 
 In the `generators` part you can configure multiple generators for different OpenAPI specifications. In the example we  fancy-api`. The provided properties are mandatory and must be present. Otherwise, the generated client code might not be Cypress-compatible.
 
-| Property        | Value                          | Explanation                                                                                                                                                                                                                                             |
-| --------------- | ------------------------------ |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `generatorName` | `typescript-fetch`             | The name of the used [generator](https://openapi-generator.tech/docs/generators). Since our template extension is based on `typescript-fetch` it must be this value. Otherwise, the generated client code might not be working.                         |
-| `templateDir`   | `typescript-cypress-templates` | The path to the directory that contains the [`typescript-cypress-templates`](typescript-cypress-templates). If not provided the generated code won't be Cypress-compatible! Change this value if your template-containging folder is named differently. |
-| `inputSpec`     | `your-api.yaml`                | This is the path to your OpenAPI specification. Instead of `inputSpec` you can also use `glob`.                                                                                                                                                         |
-| `output`        | `your-output-folder`           | This is the path to the directory into which the client will be generated. If it doesn't exist the generator creates it.                                                                                                                                |
+| Property        | Value                          | Explanation                                                                                                                                                                                                                                            |
+| --------------- | ------------------------------ |--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `generatorName` | `typescript-fetch`             | The name of the used [generator](https://openapi-generator.tech/docs/generators). Since our template extension is based on `typescript-fetch` it must be this value. Otherwise, the generated client code might not be working.                        |
+| `templateDir`   | `typescript-cypress-templates` | The path to the directory that contains the [`typescript-cypress-templates`](typescript-cypress-templates). If not provided the generated code won't be Cypress-compatible! Change this value if your template-containing folder is named differently. |
+| `inputSpec`     | `your-api.yaml`                | This is the path to your OpenAPI specification. Instead of `inputSpec` you can also use `glob`.                                                                                                                                                        |
+| `output`        | `your-output-folder`           | This is the path to the directory into which the client will be generated. If it doesn't exist the generator creates it.                                                                                                                               |
 
 #### 3. Generate the client code
 
-To generate the code just execute the following command:
+To generate the code, execute the following command:
 
 ```shell
 npx openapi-generator-cli generate --generator-key fancy-api
