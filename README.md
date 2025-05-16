@@ -146,7 +146,7 @@ To generate the client code for Cypress, we recommend using the `openapitools.js
 
 The `openapi-generator-cli` is a node package wrapper for the actual `openapi-generator`. Therefore, the configuration requires the `version` of the generator to be set. The available versions can be found [here](https://github.com/OpenAPITools/openapi-generator/releases). Remove the `version` line and the latest version is taken automatically.
 
-In the `generators` part you can configure multiple generators for different OpenAPI specifications. In the example we  fancy-api`. The provided properties are mandatory and must be present. Otherwise, the generated client code might not be Cypress-compatible.
+In the `generators` part you can configure multiple generators for different OpenAPI specifications. In the example we use `fancy-api`. The provided properties are mandatory and must be present. Otherwise, the generated client code might not be Cypress-compatible.
 
 | Property        | Value                          | Explanation                                                                                                                                                                                                                                            |
 | --------------- | ------------------------------ |--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
