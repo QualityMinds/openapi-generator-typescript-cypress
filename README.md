@@ -4,6 +4,8 @@ This project provides an extension of the **[OpenAPI Generator `typescript-fetch
 
 🗣️ If you don't need the introductory blabla, then skip the [Motivation](#motivation) section and jump directly to the [Usage Guide](#usage-guide).
 
+We also wrote a Mediuam article which can be found here: https://medium.com/@janreimone/generate-cypress-compatible-api-clients-from-openapi-specifications-8d11b3c33991
+
 ## Motivation
 
 When implementing tests, we usually apply the _Arrange-Act-Assert_ pattern. It means that we, first, put the application under test (AUT) into a state (_arrange_) where we exactly know what to expect after interacting with the AUT. Second, we interact with the AUT and provoke certain behaviour (_act_) we want to verify. And third, we verify if our interaction with the AUT resulted in the expected outcome (_assert_).
