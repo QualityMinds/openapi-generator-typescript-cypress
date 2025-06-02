@@ -8,7 +8,7 @@
   "type": "module",
   "scripts": {},
   "dependencies": {
-    "execa": "^9.5.3",
+    "execa": "^9.6.0",
     "fs-extra": "^11.3.0"
   }
 }
