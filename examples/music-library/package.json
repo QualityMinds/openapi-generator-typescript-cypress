@@ -14,7 +14,7 @@
     "@faker-js/faker": "^9.9.0",
     "@openapitools/openapi-generator-cli": "^2.21.4",
     "@stoplight/prism-cli": "^5.14.2",
-    "cypress": "^14.5.3",
+    "cypress": "^14.5.4",
     "start-server-and-test": "^2.0.13",
     "typescript": "^5.9.2"
   }
