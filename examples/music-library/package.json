@@ -15,7 +15,7 @@
     "@openapitools/openapi-generator-cli": "^2.23.4",
     "@stoplight/prism-cli": "^5.14.2",
     "cypress": "^15.2.0",
-    "start-server-and-test": "^2.1.0",
+    "start-server-and-test": "^2.1.2",
     "typescript": "^5.9.2"
   }
 }
