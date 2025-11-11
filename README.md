@@ -133,7 +133,7 @@ To generate the client code for Cypress, we recommend using the `openapitools.js
   "$schema": "./node_modules/@openapitools/openapi-generator-cli/config.schema.json",
   "spaces": 2,
   "generator-cli": {
-    "version": "7.13.0",
+    "version": "7.17.0",
     "generators": {
       "fancy-api": {
         "generatorName": "typescript-fetch",
@@ -170,7 +170,7 @@ The output of a successful generation should be similar to:
 ```shell
 npx openapi-generator-cli generate --generator-key fancy-api
 
-Did set selected version to 7.13.0
+Did set selected version to 7.17.0
 [[fancy-api] fancy-api.yaml] [main] INFO  o.o.codegen.DefaultGenerator - Generating with dryRun=false
 [[fancy-api] fancy-api.yaml] [main] INFO  o.o.c.ignore.CodegenIgnoreProcessor - Output directory (/fancy-api-project/cypress/openapi-gen) does not exist, or is inaccessible. No file (.openapi-generator-ignore) will be evaluated.
 [[fancy-api] fancy-api.yaml] [main] INFO  o.o.codegen.DefaultGenerator - OpenAPI Generator: typescript-fetch (client)
