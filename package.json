@@ -9,6 +9,6 @@
   "scripts": {},
   "dependencies": {
     "execa": "^9.6.1",
-    "fs-extra": "^11.3.2"
+    "fs-extra": "^11.3.3"
   }
 }
