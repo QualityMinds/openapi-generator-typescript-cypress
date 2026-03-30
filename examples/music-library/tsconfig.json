@@ -1,14 +1,16 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "lib": ["es5", "dom"],
+    "target": "es6",
+    "lib": ["es6", "dom"],
     "module": "commonjs",
     "types": ["cypress", "node"],
+    "sourceMap": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
-    "noImplicitOverride": true
+    "noImplicitOverride": true,
+    "ignoreDeprecations": "6.0"
   },
   "include": ["**/*.ts", "cypress.d.ts"]
 }
