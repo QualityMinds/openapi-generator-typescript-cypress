@@ -13,9 +13,9 @@
   "devDependencies": {
     "@faker-js/faker": "^10.3.0",
     "@openapitools/openapi-generator-cli": "^2.34.0",
-    "@stoplight/prism-cli": "^5.15.10",
+    "@stoplight/prism-cli": "^5.15.11",
     "cypress": "^15.16.0",
-    "start-server-and-test": "^3.0.5",
+    "start-server-and-test": "^3.0.7",
     "typescript": "^6.0.3"
   }
 }
