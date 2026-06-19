@@ -11,7 +11,7 @@
     "test:mock": "start-test prism:mock http://127.0.0.1:4010/health cy:run"
   },
   "devDependencies": {
-    "@faker-js/faker": "^10.3.0",
+    "@faker-js/faker": "^10.5.0",
     "@openapitools/openapi-generator-cli": "^2.38.0",
     "@stoplight/prism-cli": "^5.15.11",
     "cypress": "^15.17.0",
