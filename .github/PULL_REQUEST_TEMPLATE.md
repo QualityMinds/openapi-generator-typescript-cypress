@@ -13,4 +13,4 @@ Include commands, UI steps, or other necessary info. -->
 
 ## ☝️ Note
 
-Check the [Contributing Guideline](../CONTRIBUTING.md).
+Check the [Contributing Guideline](/QualityMinds/openapi-generator-typescript-cypress/blob/main/CONTRIBUTING.md).
